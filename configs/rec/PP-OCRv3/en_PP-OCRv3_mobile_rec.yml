@@ -20,7 +20,7 @@ Global:
   use_space_char: true
   distributed: true
   save_res_path: ./output/rec/predicts_ppocrv3_en.txt
-  use_wandb: True
+  use_wandb: False
 
 
 Optimizer:
