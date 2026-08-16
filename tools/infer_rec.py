@@ -21,6 +21,7 @@ import numpy as np
 import os
 import sys
 import json
+import time
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -137,9 +138,12 @@ def main():
 
     infer_imgs = config["Global"]["infer_img"]
     infer_list = config["Global"].get("infer_list", None)
-    with open(save_res_path, "w") as fout:
+    count = 0
+    total_time = 0
+    with open(save_res_path, "w", encoding="utf-8") as fout:
         for file in get_image_file_list(infer_imgs, infer_list=infer_list):
             logger.info("infer_img: {}".format(file))
+            starttime = time.time()
             with open(file, "rb") as f:
                 img = f.read()
                 if config["Architecture"]["algorithm"] in [
@@ -222,8 +226,17 @@ def main():
                     info = post_result[0][0] + "\t" + str(post_result[0][1])
 
             if info is not None:
+                elapse = time.time() - starttime
+                total_time += elapse
+                count += 1
                 logger.info("\t result: {}".format(info))
-                fout.write(file + "\t" + info + "\n")
+                logger.info("\t time cost: {}".format(elapse))
+                fout.write(file + "\t" + info + "\t" + str(elapse) + "\n")
+    if count > 0:
+        avg_time = total_time / count
+        logger.info("avg time cost: {}".format(avg_time))
+        with open(save_res_path, "a", encoding="utf-8") as fout:
+            fout.write("avg time cost: {}\n".format(avg_time))
     logger.info("success!")
 
 

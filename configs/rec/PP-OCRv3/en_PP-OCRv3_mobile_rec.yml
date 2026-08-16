@@ -2,24 +2,25 @@ Global:
   model_name: en_PP-OCRv3_mobile_rec  # To use static model for inference.
   debug: false
   use_gpu: true
-  epoch_num: 500
+  epoch_num: 150
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/v3_en_mobile
-  save_epoch_step: 3
-  eval_batch_step: [0, 2000]
+  save_epoch_step: 10
+  eval_batch_step: [0, 1000]
   cal_metric_during_train: true
   pretrained_model:
   checkpoints:
   save_inference_dir:
   use_visualdl: false
   infer_img: doc/imgs_words/ch/word_1.jpg
-  character_dict_path: ppocr/utils/en_dict.txt
+  character_dict_path: /content/license_plate_dict.txt
   max_text_length: &max_text_length 25
   infer_mode: false
   use_space_char: true
   distributed: true
   save_res_path: ./output/rec/predicts_ppocrv3_en.txt
+  use_wandb: True
 
 
 Optimizer:
@@ -67,7 +68,7 @@ Loss:
     - CTCLoss:
     - SARLoss:
 
-PostProcess:  
+PostProcess:
   name: CTCLabelDecode
 
 Metric:
@@ -78,10 +79,11 @@ Metric:
 Train:
   dataset:
     name: SimpleDataSet
-    data_dir: ./train_data/
-    ext_op_transform_idx: 1
+    data_dir: /content/ocr-license-plate-dataset
     label_file_list:
-    - ./train_data/train_list.txt
+    - /content/ocr-license-plate-dataset/train_labels.txt
+    ext_op_transform_idx: 1
+
     transforms:
     - DecodeImage:
         img_mode: BGR
@@ -104,15 +106,15 @@ Train:
         - valid_ratio
   loader:
     shuffle: true
-    batch_size_per_card: 128
+    batch_size_per_card: 256
     drop_last: true
     num_workers: 4
 Eval:
   dataset:
     name: SimpleDataSet
-    data_dir: ./train_data
+    data_dir: /content/ocr-license-plate-dataset
     label_file_list:
-    - ./train_data/val_list.txt
+    - /content/ocr-license-plate-dataset/val_labels.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
@@ -130,5 +132,5 @@ Eval:
   loader:
     shuffle: false
     drop_last: false
-    batch_size_per_card: 128
+    batch_size_per_card: 256
     num_workers: 4
