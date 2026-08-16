@@ -74,10 +74,10 @@ Train:
   dataset:
     name: MultiScaleDataSet
     ds_width: false
-    data_dir: D:/IEEE/data/phD/data/50k_OCR/aaa_train_ne_version_5
+    data_dir: /kaggle/input/datasets/anhlone3/license-plate-dataset-normal
     ext_op_transform_idx: 1
     label_file_list:
-    - D:/IEEE/data/phD/data/50k_OCR/aaa_train_ne_version_5/train_labels.txt
+    - /kaggle/input/datasets/anhlone3/license-plate-dataset-normal/train_labels.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
@@ -123,9 +123,9 @@ Train:
 Eval:
   dataset:
     name: SimpleDataSet
-    data_dir: D:/IEEE/data/phD/data/50k_OCR/aaa_train_ne_version_5
+    data_dir: /kaggle/input/datasets/anhlone3/license-plate-dataset-normal
     label_file_list:
-    - D:/IEEE/data/phD/data/50k_OCR/aaa_train_ne_version_5/val_labels.txt
+    - /kaggle/input/datasets/anhlone3/license-plate-dataset-normal/val_labels.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
