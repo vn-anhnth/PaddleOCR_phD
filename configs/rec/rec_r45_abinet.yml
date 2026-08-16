@@ -1,20 +1,21 @@
 Global:
   use_gpu: True
-  epoch_num: 10
+  epoch_num: 105
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/rec/r45_abinet/
-  save_epoch_step: 1
+  save_epoch_step: 5
   # evaluation is run every 2000 iterations
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [0, 1000]
   cal_metric_during_train: True
-  pretrained_model: ./pretrain_models/abinet_vl_pretrained
+  pretrained_model:
   checkpoints:
   save_inference_dir: ./output/rec/r45_abinet/infer
   use_visualdl: False
+  use_wandb: False
   infer_img: doc/imgs_words_en/word_10.png
   # for data or label process
-  character_dict_path:
+  character_dict_path: ./ppocr/utils/dict/license_plate_vn_dict.txt
   character_type: en
   max_text_length: &max_text_length 25
   infer_mode: False
@@ -27,9 +28,12 @@ Optimizer:
   beta2: 0.99
   clip_norm: 20.0
   lr:
-    name: Piecewise
-    decay_epochs: [6]
-    values: [0.0001, 0.00001]
+    # name: Piecewise
+    # decay_epochs: [6]
+    # values: [0.0001, 0.00001]
+    name: Cosine
+    learning_rate: 0.001
+    warmup_epoch: 10
   regularizer:
     name: 'L2'
     factor: 0.
@@ -62,8 +66,10 @@ Metric:
 
 Train:
   dataset:
-    name: LMDBDataSet
-    data_dir: ./train_data/data_lmdb_release/training/
+    name: SimpleDataSet
+    data_dir: /content/ocr-license-plate-dataset
+    label_file_list:
+    - /content/ocr-license-plate-dataset/train_labels.txt
     transforms:
       - DecodeImage: # load image
           img_mode: RGB
@@ -77,14 +83,16 @@ Train:
           keep_keys: ['image', 'label', 'length'] # dataloader will return list in this order
   loader:
     shuffle: True
-    batch_size_per_card: 96
+    batch_size_per_card: 256
     drop_last: True
     num_workers: 4
 
 Eval:
   dataset:
-    name: LMDBDataSet
-    data_dir: ./train_data/data_lmdb_release/evaluation/
+    name: SimpleDataSet
+    data_dir: /content/ocr-license-plate-dataset
+    label_file_list:
+    - /content/ocr-license-plate-dataset/val_labels.txt
     transforms:
       - DecodeImage: # load image
           img_mode: RGB
